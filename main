@@ -1,0 +1,75 @@
+//1. Подключение к базе данных:
+
+
+import psycopg2
+
+conn = psycopg2.connect(
+    host="localhost",
+    database="mydatabase",
+    user="myusername",
+    password="mypassword"
+)
+
+
+//2. Создание таблицы в базе данных:
+
+
+cur = conn.cursor()
+
+cur.execute("""
+    CREATE TABLE tours (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255),
+        description TEXT,
+        price NUMERIC(10, 2),
+        destination VARCHAR(255),
+        duration INTEGER
+    )
+""")
+
+conn.commit()
+
+
+//3. Вставка данных в таблицу:
+
+
+cur.execute("""
+    INSERT INTO tours (name, description, price, destination, duration)
+    VALUES (%s, %s, %s, %s, %s)
+""", ("Tour Name", "Tour Description", 1000.00, "Tour Destination", 7))
+
+conn.commit()
+
+
+//4. Выборка данных из таблицы:
+
+
+cur.execute("SELECT * FROM tours")
+
+rows = cur.fetchall()
+
+for row in rows:
+    print(row)
+
+
+//5. Обновление данных в таблице:
+
+
+cur.execute("""
+    UPDATE tours
+    SET price = %s
+    WHERE id = %s
+""", (1200.00, 1))
+
+conn.commit()
+
+
+//6. Удаление данных из таблицы:
+
+
+cur.execute("""
+    DELETE FROM tours
+    WHERE id = %s
+""", (1,))
+
+conn.commit()
